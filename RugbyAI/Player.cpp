@@ -7,31 +7,30 @@ void Player::OnInitialize()
 
 void Player::OnUpdate()
 {
+	if (mDisplacementBoundingBox == nullptr) return;
+
 	const sf::Vector2f topLeftPosition = GetPosition(0.f, 0.f);
 	const sf::Vector2f botRightPosition = GetPosition(1.f, 1.f);
 
 	int newPosX = topLeftPosition.x;
 	int newPosY = topLeftPosition.y;
-	if (mDisplacementBoundingBox)
+	if (topLeftPosition.x < mDisplacementBoundingBox->xMin)
 	{
-		if (topLeftPosition.x < mDisplacementBoundingBox->xMin)
-		{
-			newPosX = mDisplacementBoundingBox->xMin;
-		}
-		if (botRightPosition.x > mDisplacementBoundingBox->xMax)
-		{
-			newPosX = mDisplacementBoundingBox->xMax - (botRightPosition.x - topLeftPosition.x);
-		}
-		if (topLeftPosition.y < mDisplacementBoundingBox->yMin)
-		{
-			newPosY = mDisplacementBoundingBox->yMin;
-		}
-		if (botRightPosition.y > mDisplacementBoundingBox->yMax)
-		{
-			newPosY = mDisplacementBoundingBox->yMax - (botRightPosition.y - topLeftPosition.y);
-		}
-		SetPosition(newPosX, newPosY, 0.f, 0.f);
+		newPosX = mDisplacementBoundingBox->xMin;
 	}
+	if (botRightPosition.x > mDisplacementBoundingBox->xMax)
+	{
+		newPosX = mDisplacementBoundingBox->xMax - (botRightPosition.x - topLeftPosition.x);
+	}
+	if (topLeftPosition.y < mDisplacementBoundingBox->yMin)
+	{
+		newPosY = mDisplacementBoundingBox->yMin;
+	}
+	if (botRightPosition.y > mDisplacementBoundingBox->yMax)
+	{
+		newPosY = mDisplacementBoundingBox->yMax - (botRightPosition.y - topLeftPosition.y);
+	}
+	SetPosition(newPosX, newPosY, 0.f, 0.f);
 }
 
 void Player::OnCollision(Entity* collidedWith)

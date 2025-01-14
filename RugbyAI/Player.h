@@ -22,7 +22,7 @@ protected:
 
 public:
 
-	virtual void SetDisplacementBoundingBox(Box* displacementBox) { mDisplacementBoundingBox; };
+	virtual void SetDisplacementBoundingBox(Box* displacementBox) { mDisplacementBoundingBox = displacementBox; };
 	virtual Box* GetDisplacementBoundingBox() const { return mDisplacementBoundingBox; }
 
 	virtual void PassBall(Player* targetPlayer);

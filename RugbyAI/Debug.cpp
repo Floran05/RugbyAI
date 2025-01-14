@@ -74,6 +74,7 @@ void Debug::DrawOutlinedCircle(float x, float y, float radius, float thickness, 
 	sf::CircleShape circle;
 
 	circle.setRadius(radius);
+	circle.setFillColor(sf::Color(0, 0, 0, 0));
 	circle.setOutlineColor(color);
 	circle.setOutlineThickness(thickness);
 	circle.setPosition(x - radius, y - radius);
