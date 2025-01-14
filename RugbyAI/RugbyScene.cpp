@@ -30,6 +30,14 @@ void RugbyScene::OnEvent(const sf::Event& event)
 	if (event.mouseButton.button == sf::Mouse::Button::Right)
 	{
 		// Try select player
+		for (Player* player : mPlayers)
+		{
+			if (player && player->IsInside(event.mouseButton.x, event.mouseButton.y))
+			{
+				mSelectedPlayer = player;
+				break;
+			}
+		}
 	}
 
 	// Events on selected player
@@ -52,12 +60,12 @@ void RugbyScene::OnUpdate()
 	int windowHeight = GetWindowHeight();
 	Debug::DrawLine(windowWidth * TRY_LANES_SCREEN_PERCENT, 0, windowWidth * TRY_LANES_SCREEN_PERCENT, windowHeight, sf::Color::White);
 	Debug::DrawLine(windowWidth * (1.f - TRY_LANES_SCREEN_PERCENT), 0, windowWidth * (1.f - TRY_LANES_SCREEN_PERCENT), windowHeight, sf::Color::White);
-	for (int i = 0; i < ZONE_COUNT; ++i)
+	/*for (int i = 0; i < ZONE_COUNT; ++i)
 	{
 		const Box& box = mAreas[i];
 
 		Debug::DrawRectangle(box.xMin, box.yMin, box.width, box.height, mColors[i]);
-	}
+	}*/
 	
 	// Check if goal
 	if (const Player* owner = mBall->GetOwner())
@@ -86,7 +94,7 @@ void RugbyScene::OnUpdate()
 	if (mSelectedPlayer)
 	{
 		const sf::Vector2f position = mSelectedPlayer->GetPosition();
-		Debug::DrawOutlinedCircle(position.x, position.y, mSelectedPlayer->GetRadius(), 2.f, sf::Color::Cyan);
+		Debug::DrawOutlinedCircle(position.x, position.y, mSelectedPlayer->GetRadius(), 4.f, sf::Color::Yellow);
 	}
 }
 
@@ -102,7 +110,7 @@ void RugbyScene::OnGoal(const Tag team)
 		break;
 	}
 
-	// Replace players and give the ball to a random player in opponent team	
+	// Reset players position and give the ball to a random player in opponent team	
 }
 
 void RugbyScene::CreateTeam(bool isLeft, const sf::Color& color)
@@ -117,7 +125,7 @@ void RugbyScene::CreateTeam(bool isLeft, const sf::Color& color)
         xStart = width * 0.85f;
     }
 
-    int playerIndex = 0;
+    int playerIndex = isLeft ? 0 : 5;
 
     for (int zone = 0; zone < ZONE_COUNT; ++zone) {
         int playerCount;
