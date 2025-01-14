@@ -63,9 +63,9 @@ protected:
     Entity() = default;
     ~Entity() = default;
 
+	virtual void OnInitialize() {};
     virtual void OnUpdate() {};
     virtual void OnCollision(Entity* collidedWith) {};
-	virtual void OnInitialize() {};
 	virtual void OnDestroy() {};
 	
 private:

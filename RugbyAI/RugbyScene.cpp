@@ -1,6 +1,8 @@
 #include "RugbyScene.h"
 #include "Debug.h"
 
+#include <iostream>
+
 void RugbyScene::OnInitialize()
 {
 }
