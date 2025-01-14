@@ -60,6 +60,6 @@ public:
 
 	void CreateTeam(bool isLeft, const sf::Color& color);
 	void OnGoal(const Tag team);
-
+	void SetPlayerPositions(bool isLeft);
 };
 
