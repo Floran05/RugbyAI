@@ -19,6 +19,8 @@ void RugbyScene::OnInitialize()
 		int yMax = yMin + zoneHeight * 2;
 		mAreas[i] = { 0, width, yMin, yMax };
 	}
+	CreateTeam(true, sf::Color::Green);  
+	CreateTeam(false, sf::Color::Red);  
 
 	mBall = CreateEntity<Ball>(15.f, sf::Color(240, 95, 64));
 }
@@ -100,5 +102,61 @@ void RugbyScene::OnGoal(const Tag team)
 		break;
 	}
 
-	// Replace players and give the ball to a random player in opponent team
+	// Replace players and give the ball to a random player in opponent team	
+}
+
+void RugbyScene::CreateTeam(bool isLeft, const sf::Color& color)
+{
+    int width = GetWindowWidth();
+    float playerRadius = 30.f;
+    float xStart;
+    if (isLeft) {
+        xStart = width * 0.15f;
+    }
+    else {
+        xStart = width * 0.85f;
+    }
+
+    int playerIndex = 0;
+
+    for (int zone = 0; zone < ZONE_COUNT; ++zone) {
+        int playerCount;
+        if (zone == 1) {
+            playerCount = 1;
+        }
+        else {
+            playerCount = 2;
+        }
+
+        float centerY = (mAreas[zone].yMin + mAreas[zone].yMax) / 2;
+
+        for (int i = 0; i < playerCount; ++i) {
+            float posY;
+            if (playerCount == 1) {
+                posY = centerY;
+            }
+            else {
+                if (i == 0) {
+                    posY = centerY - playerRadius * 2.f;
+                }
+                else {
+                    posY = centerY + playerRadius * 2.f;
+                }
+            }
+
+            Player* pPlayer = CreateEntity<Player>(playerRadius, color);
+            pPlayer->SetPosition(xStart, posY, 0.5f, 0.5f);
+            pPlayer->SetDisplacementBoundingBox(&mAreas[zone]);
+
+            if (isLeft) {
+                pPlayer->SetTag(RugbyScene::Tag::PlayerGreen);
+            }
+            else {
+                pPlayer->SetTag(RugbyScene::Tag::PlayerRed);
+            }
+
+            mPlayers[playerIndex] = pPlayer; 
+            playerIndex++;
+        }
+    }
 }

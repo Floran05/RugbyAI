@@ -49,6 +49,7 @@ protected:
 	Box mAreas[3];
 	sf::Color mColors[3] = { sf::Color::Red,sf::Color::Blue,sf::Color::White };
 	Ball* mBall;
+	Player* mPlayers[10];
 
 	Player* mSelectedPlayer;
 
@@ -57,6 +58,7 @@ protected:
 
 public:
 
+	void CreateTeam(bool isLeft, const sf::Color& color);
 	void OnGoal(const Tag team);
 
 };
