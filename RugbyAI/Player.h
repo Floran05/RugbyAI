@@ -3,20 +3,7 @@
 #include "Entity.h"
 #include "Ball.h"
 
-struct Box
-{
-	int xMin;
-	int xMax;
-	int yMin;
-	int yMax;
-
-	int width = xMax - xMin;
-	int height = yMax - yMin;
-
-	constexpr bool IsPointInBox(int x, int y) const {
-		return x >= xMin && x <= xMax && y >= yMin && y <= yMax;
-	}
-};
+class Box;
 
 class Player : public Entity
 {
@@ -31,12 +18,12 @@ protected:
 protected:
 
 	Ball* mBall;
-	Box mDisplacementBoundingBox;
+	Box* mDisplacementBoundingBox;
 
 public:
 
-	virtual void SetDisplacementBoundingBox(int xMin, int xMax, int yMin, int yMax);
-	virtual Box GetDisplacementBoundingBox() const { return mDisplacementBoundingBox; }
+	virtual void SetDisplacementBoundingBox(Box* displacementBox) { mDisplacementBoundingBox; };
+	virtual Box* GetDisplacementBoundingBox() const { return mDisplacementBoundingBox; }
 
 	virtual void PassBall(Player* targetPlayer);
 	virtual void RecoverBall(Ball* ball);

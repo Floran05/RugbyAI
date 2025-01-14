@@ -7,12 +7,12 @@ void RugbyScene::OnInitialize()
 {
 	int width = GetWindowWidth();
 	int height = GetWindowHeight();
-	float zoneHeight = height / (ZONE_COUNT*2.f - 2);
+	float zoneHeight = height / (ZONE_COUNT * 2.f - 2);
 	float zoneWidt = width;
 	for (int i = 0; i < ZONE_COUNT; ++i) {
 		int yMin = i * zoneHeight;
-		int yMax = yMin + zoneHeight*2;
-		mAreas[i] = { 0,width,yMin,yMax };
+		int yMax = yMin + zoneHeight * 2;
+		mAreas[i] = { 0, width, yMin, yMax };
 	}
 }
 
@@ -27,7 +27,7 @@ void RugbyScene::OnUpdate()
 	int windowHeight = GetWindowHeight();
 	Debug::DrawLine(windowWidth * 0.1f, 0, windowWidth * 0.1f, windowHeight, sf::Color::White);
 	Debug::DrawLine(windowWidth * 0.9f, 0, windowWidth * 0.9f, windowHeight, sf::Color::White);
-	for (int i = 0; i < ZONE_COUNT; i++)
+	for (int i = 0; i < ZONE_COUNT; ++i)
 	{
 		const Box& box = mAreas[i];
 

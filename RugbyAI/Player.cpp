@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "RugbyScene.h"
 
 void Player::OnInitialize()
 {
@@ -14,21 +15,21 @@ void Player::OnUpdate()
 
 	int newPosX = topLeftPosition.x;
 	int newPosY = topLeftPosition.y;
-	if (topLeftPosition.x < mDisplacementBoundingBox.xMin)
+	if (topLeftPosition.x < mDisplacementBoundingBox->xMin)
 	{
-		newPosX = mDisplacementBoundingBox.xMin;
+		newPosX = mDisplacementBoundingBox->xMin;
 	}
-	if (botRightPosition.x > mDisplacementBoundingBox.xMax)
+	if (botRightPosition.x > mDisplacementBoundingBox->xMax)
 	{
-		newPosX = mDisplacementBoundingBox.xMax - (botRightPosition.x - topLeftPosition.x);
+		newPosX = mDisplacementBoundingBox->xMax - (botRightPosition.x - topLeftPosition.x);
 	}
-	if (topLeftPosition.y < mDisplacementBoundingBox.yMin)
+	if (topLeftPosition.y < mDisplacementBoundingBox->yMin)
 	{
-		newPosY = mDisplacementBoundingBox.yMin;
+		newPosY = mDisplacementBoundingBox->yMin;
 	}
-	if (botRightPosition.y > mDisplacementBoundingBox.yMax)
+	if (botRightPosition.y > mDisplacementBoundingBox->yMax)
 	{
-		newPosY = mDisplacementBoundingBox.yMax - (botRightPosition.y - topLeftPosition.y);
+		newPosY = mDisplacementBoundingBox->yMax - (botRightPosition.y - topLeftPosition.y);
 	}
 	SetPosition(newPosX, newPosY, 0.f, 0.f);
 }
@@ -39,11 +40,6 @@ void Player::OnCollision(Entity* collidedWith)
 
 void Player::OnDestroy()
 {
-}
-
-void Player::SetDisplacementBoundingBox(int xMin, int xMax, int yMin, int yMax)
-{
-	mDisplacementBoundingBox = { xMin, xMax, yMin, yMax };
 }
 
 void Player::PassBall(Player* targetPlayer)
