@@ -3,6 +3,11 @@
 #include "Scene.h"
 #include "Player.h"
 
+#define ZONE_COUNT 3
+#define TRY_LANES_SCREEN_PERCENT 0.9f
+#define PLAYER_SPEED 150.f
+
+class Ball;
 namespace sf
 {
 	class Event;
@@ -32,13 +37,27 @@ public:
 	{
 		PlayerGreen,
 		PlayerRed,
-		Ball
+		RugbyBall
 	};
-	Box mAreas[3];
-	sf::Color mColors[3] = { sf::Color::Red,sf::Color::Blue,sf::Color::White };
+
 	void OnInitialize() override;
 	void OnEvent(const sf::Event& event) override;
 	void OnUpdate() override;
+
+protected:
+
+	Box mAreas[3];
+	sf::Color mColors[3] = { sf::Color::Red,sf::Color::Blue,sf::Color::White };
+	Ball* mBall;
+
+	Player* mSelectedPlayer;
+
+	int GreenTeamPoints;
+	int RedTeamPoints;
+
+public:
+
+	void OnGoal(const Tag team);
 
 };
 

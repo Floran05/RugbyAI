@@ -69,6 +69,18 @@ void Debug::DrawCircle(float x, float y, float radius, const sf::Color& color)
 	Debug::Get()->mCircles.push_back(circle);
 }
 
+void Debug::DrawOutlinedCircle(float x, float y, float radius, float thickness, const sf::Color& color)
+{
+	sf::CircleShape circle;
+
+	circle.setRadius(radius);
+	circle.setOutlineColor(color);
+	circle.setOutlineThickness(thickness);
+	circle.setPosition(x - radius, y - radius);
+
+	Debug::Get()->mCircles.push_back(circle);
+}
+
 void Debug::DrawText(float x, float y, const std::string& text, const sf::Color& color)
 {
 	DrawText(x, y, text, 0.f, 0.f, color);

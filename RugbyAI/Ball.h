@@ -2,6 +2,8 @@
 
 #include "Entity.h"
 
+class Player;
+
 class Ball : public Entity
 {
 protected:
@@ -13,11 +15,12 @@ protected:
 
 protected:
 
-	Entity* mOwner;
+	Player* mOwner;
 
 public:
 
-	void SetOwner(Entity* owner) { mOwner = owner; }
+	void SetOwner(Player* owner) { mOwner = owner; }
+	Player* GetOwner() const { return mOwner; }
 
 };
 

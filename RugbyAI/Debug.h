@@ -35,6 +35,7 @@ public:
 	static void DrawLine(float x1, float y1, float x2, float y2, const sf::Color& color);
 	static void DrawRectangle(float x, float y, float width, float height, const sf::Color& color);
 	static void DrawCircle(float x, float y, float radius, const sf::Color& color);
+	static void DrawOutlinedCircle(float x, float y, float radius, float thickness, const sf::Color& color);
 	static void DrawText(float x, float y, const std::string& text, const sf::Color& color);
 	static void DrawText(float x, float y, const std::string& text, float ratioX, float ratioY, const sf::Color& color);
 
