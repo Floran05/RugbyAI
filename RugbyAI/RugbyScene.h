@@ -36,9 +36,10 @@ public:
 	};
 	Box mAreas[3];
 	sf::Color mColors[3] = { sf::Color::Red,sf::Color::Blue,sf::Color::White };
+	Player* mPlayers[10];
 	void OnInitialize() override;
 	void OnEvent(const sf::Event& event) override;
 	void OnUpdate() override;
-
+	void CreateTeam(bool isLeft, sf::Color color);
 };
 
