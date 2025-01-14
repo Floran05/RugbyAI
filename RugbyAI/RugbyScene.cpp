@@ -31,7 +31,7 @@ void RugbyScene::OnUpdate()
 	{
 		const Box& box = mAreas[i];
 
-	Debug::DrawRectangle(box.xMin, box.yMin, box.width, box.height, mColors[i]);
+		Debug::DrawRectangle(box.xMin, box.yMin, box.width, box.height, mColors[i]);
 	}
 	
 }
