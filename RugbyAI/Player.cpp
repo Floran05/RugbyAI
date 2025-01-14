@@ -43,7 +43,7 @@ void Player::OnDestroy()
 
 void Player::PassBall(Player* targetPlayer)
 {
-	if (mBall == nullptr) return;
+	if (mBall == nullptr || targetPlayer == this) return;
 
 	targetPlayer->RecoverBall(mBall);
 	mBall = nullptr;

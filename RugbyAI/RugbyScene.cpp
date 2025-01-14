@@ -28,29 +28,47 @@ void RugbyScene::OnInitialize()
 
 void RugbyScene::OnEvent(const sf::Event& event)
 {
-	if (event.mouseButton.button == sf::Mouse::Button::Right)
+	// Mouse events
+	if (event.type == sf::Event::EventType::MouseButtonPressed)
 	{
-		// Try select player
-		for (Player* player : mPlayers)
+		if (event.mouseButton.button == sf::Mouse::Button::Right)
 		{
-			if (player && player->IsInside(event.mouseButton.x, event.mouseButton.y))
+			// Try select player
+			for (Player* player : mPlayers)
 			{
-				mSelectedPlayer = player;
-				break;
+				if (player && player->IsInside(event.mouseButton.x, event.mouseButton.y))
+				{
+					if (mSelectedPlayer && mSelectedPlayer == player)
+					{
+						mSelectedPlayer = nullptr;
+					}
+					else
+					{
+						mSelectedPlayer = player;
+					}
+					break;
+				}
 			}
+		}
+
+		// Events on selected player
+		if (mSelectedPlayer == nullptr) return;
+
+		if (event.mouseButton.button == sf::Mouse::Button::Left)
+		{
+			mSelectedPlayer->GoToPosition(event.mouseButton.x, event.mouseButton.y, PLAYER_SPEED);
 		}
 	}
 
-	// Events on selected player
-	if (mSelectedPlayer == nullptr) return;
+	if (event.type == sf::Event::KeyPressed)
+	{
+		// Events on selected player
+		if (mSelectedPlayer == nullptr) return;
 
-	if (event.mouseButton.button == sf::Mouse::Button::Left)
-	{
-		mSelectedPlayer->GoToPosition(event.mouseButton.x, event.mouseButton.y, PLAYER_SPEED);
-	}
-	if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space)
-	{
-		// Force pass
+		if (event.key.code == sf::Keyboard::Space)
+		{
+			// Force pass
+		}
 	}
 }
 
@@ -191,4 +209,13 @@ void RugbyScene::SetPlayerPositions(bool isLeft)
 			pPlayer->SetDisplacementBoundingBox(&mAreas[zone]);
 		}
 	}
+}
+
+void RugbyScene::GiveBallToPlayer(Player* targetPlayer)
+{
+	for (Player* player : mPlayers)
+	{
+		player->PassBall(targetPlayer);
+	}
+	targetPlayer->RecoverBall(mBall);
 }
