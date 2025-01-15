@@ -83,7 +83,8 @@ public:
 	void SetPlayerPositions(bool isLeft);
 	void GiveBallToPlayer(Player* player);
 
-	std::vector<TargetPassStatus> FindEligiblePlayersForPass();
+	std::vector<TargetPassStatus> GetTeammatesPassStatus();
+	Player* GetBestTeammateForPass();
 	float InterceptionRisk(int senderX, int senderY, int receiverX, int receiverY, int opponentX, int opponentY);
 
 	Ball* GetBall() { return mBall; }

@@ -271,7 +271,7 @@ void RugbyScene::GiveBallToPlayer(Player* targetPlayer)
 	targetPlayer->RecoverBall(mBall);
 }
 
-std::vector<TargetPassStatus> RugbyScene::FindEligiblePlayersForPass()
+std::vector<TargetPassStatus> RugbyScene::GetTeammatesPassStatus()
 {
 	// Check if behind
 	// Better check for opponent position
@@ -329,6 +329,20 @@ std::vector<TargetPassStatus> RugbyScene::FindEligiblePlayersForPass()
 	}
 
 	return eligiblePlayers;
+}
+
+Player* RugbyScene::GetBestTeammateForPass()
+{
+	std::vector<TargetPassStatus> statuses = GetTeammatesPassStatus();
+	TargetPassStatus bestStatus{ nullptr, PassStatus::OpponentInPath, -1.f };
+	for (const TargetPassStatus& status : statuses)
+	{
+		if (status.status == PassStatus::AllConditionsGood && status.score > bestStatus.score)
+		{
+			bestStatus = status;
+		}
+	}
+	return bestStatus.target;
 }
 
 float RugbyScene::InterceptionRisk(int senderX, int senderY, int receiverX, int receiverY, int opponentX, int opponentY)

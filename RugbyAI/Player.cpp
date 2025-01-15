@@ -5,6 +5,7 @@ void Player::OnInitialize()
 {
 	mInvincibilityDuration = 1.0f;
 	mSpeedBoostDuration = 1.5f;
+	mIsInvincible = false;
 }
 
 void Player::OnUpdate()
@@ -37,6 +38,12 @@ void Player::OnUpdate()
 
 void Player::OnCollision(Entity* collidedWith)
 {
+	if (IsInvincible() || collidedWith->IsTag(GetTag()) || collidedWith->IsTag(RugbyScene::Tag::RugbyBall)) return;
+
+	if (Player* player = dynamic_cast<Player*>(collidedWith))
+	{
+		PassBall(player);
+	}
 }
 
 void Player::OnDestroy()
