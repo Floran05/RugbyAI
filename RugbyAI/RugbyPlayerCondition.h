@@ -7,4 +7,7 @@ class PlayerCondition_AllyHasBall : public Condition<Player> {
 public :
 	bool OnTest(Player* player) override;
 };
-
+class PlayerCondition_ShouldPass : public Condition<Player> {
+public:
+	bool OnTest(Player* player) override;
+};
