@@ -23,6 +23,9 @@ public:
 	void OnUpdate(Player* pPlayer) override;
 	void OnEnd(Player* pPlayer) override;
 protected :
-	float TargetTryLanes;
-	Player* ballCarrier;
+	float mTargetTryLanes;
+	Player* mballCarrier;
+	float mfollowSpeed;
+	float mTargetX;
+	float mTargetY;
 };
