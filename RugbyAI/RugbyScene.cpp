@@ -121,7 +121,7 @@ void RugbyScene::OnUpdate()
 	// Draw pass
 	if (mBall->GetOwner())
 	{
-		const std::vector<TargetPassStatus> targets = FindEligiblePlayersForPass();
+		const std::vector<TargetPassStatus> targets = GetTeammatesPassStatus();
 		float maxScore = targets.size() ? targets[0].score : -1.f;
 		int maxScoreIndex = targets.size() ? 0 : -1;
 		int index = 0;
