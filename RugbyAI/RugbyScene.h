@@ -8,6 +8,7 @@
 #define PLAYER_SPEED 150.f
 #define PLAYER_RADIUS 30.f
 #define BALL_SPEED 300.f
+#define BALL_RADIUS 15.f
 #define MAX_PASS_DISTANCE 400.f
 #define ENEMY_DISTANCE 100.f
 
@@ -44,6 +45,7 @@ struct TargetPassStatus
 {
 	Player* target;
 	PassStatus status;
+	float score;
 };
 
 class RugbyScene : public Scene
@@ -82,7 +84,7 @@ public:
 	void GiveBallToPlayer(Player* player);
 
 	std::vector<TargetPassStatus> FindEligiblePlayersForPass();
-	bool CanIntercept(int senderX, int senderY, int receiverX, int receiverY, int opponentX, int opponentY);
+	float InterceptionRisk(int senderX, int senderY, int receiverX, int receiverY, int opponentX, int opponentY);
 
 };
 

@@ -3,6 +3,8 @@
 
 void Player::OnInitialize()
 {
+	mInvincibilityDuration = 1.0f;
+	mSpeedBoostDuration = 1.5f;
 }
 
 void Player::OnUpdate()
