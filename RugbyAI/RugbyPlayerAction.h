@@ -38,4 +38,3 @@ public:
 	void OnEnd(Player* pPlayer) override;
 };
 	
-};
