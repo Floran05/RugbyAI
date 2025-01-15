@@ -8,7 +8,7 @@ void RugbyPlayerAction_Try::OnStart(Player* pPlayer)
 
 	pPlayer->SetIsInvicible(true);
 	pPlayer->SetSpeed(PLAYER_SPEED * SPEED_BOOST_INCREASE_PERCENT);
-	pPlayer->SetDirection(1.f, 0.f);
+	pPlayer->SetDirection(pPlayer->IsTag(RugbyScene::Tag::PlayerGreen) ? 1.f : -1.f, 0.f);
 }
 
 void RugbyPlayerAction_Try::OnUpdate(Player* pPlayer)
@@ -35,9 +35,11 @@ void RugbyPlayerAction_Try::OnEnd(Player* pPlayer)
 
 void RugbyPlayerAction_Support::OnStart(Player* pPlayer)
 {
-	mTargetTryLanes = pPlayer->GetTag() == RugbyScene::Tag::PlayerGreen ? TRY_LANES_SCREEN_PERCENT : 1.f - TRY_LANES_SCREEN_PERCENT;
+	int windowWidth = pPlayer->GetScene()->GetWindowWidth();
+	mTargetTryLanes = pPlayer->IsTag(RugbyScene::Tag::PlayerGreen) ? windowWidth : 0;
 	mballCarrier = pPlayer->GetScene<RugbyScene>()->GetBall()->GetOwner();
 	float followSpeed = PLAYER_SPEED;
+	pPlayer->SetSpeed(PLAYER_SPEED);
 	mTargetX = mTargetTryLanes;
 	mTargetY = pPlayer->GetPosition().y;
 	pPlayer->GoToPosition(mTargetX, mTargetY, PLAYER_SPEED);
@@ -81,5 +83,34 @@ void RubgyPlayerAction_Pass::OnUpdate(Player* pPlayer)
 }
 
 void RubgyPlayerAction_Pass::OnEnd(Player* pPlayer)
+{
+}
+
+void RubgyPlayerAction_Defense::OnStart(Player* pPlayer)
+{
+	pPlayer->SetSpeed(PLAYER_SPEED);
+}
+
+void RubgyPlayerAction_Defense::OnUpdate(Player* pPlayer)
+{
+	if (Player* target = pPlayer->GetScene<RugbyScene>()->GetBall()->GetOwner()) {
+		const sf::Vector2f targetPosition = target->GetPosition();
+		pPlayer->GoToPosition(targetPosition.x, targetPosition.y);
+	}
+}
+
+void RubgyPlayerAction_Defense::OnEnd(Player* pPlayer)
+{
+}
+
+void RugbyPlayerAction_Start::OnStart(Player* pPlayer)
+{
+}
+
+void RugbyPlayerAction_Start::OnUpdate(Player* pPlayer)
+{
+}
+
+void RugbyPlayerAction_Start::OnEnd(Player* pPlayer)
 {
 }

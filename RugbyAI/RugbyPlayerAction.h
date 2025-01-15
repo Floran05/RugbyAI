@@ -38,3 +38,18 @@ public:
 	void OnEnd(Player* pPlayer) override;
 };
 	
+class RubgyPlayerAction_Defense : public Action<Player>
+{
+public:
+	void OnStart(Player* pPlayer) override;
+	void OnUpdate(Player* pPlayer) override;
+	void OnEnd(Player* pPlayer) override;
+};
+
+class RugbyPlayerAction_Start : public Action<Player>
+{
+public:
+	void OnStart(Player* pPlayer) override;
+	void OnUpdate(Player* pPlayer) override;
+	void OnEnd(Player* pPlayer) override;
+};

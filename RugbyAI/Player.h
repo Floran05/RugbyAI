@@ -3,9 +3,11 @@
 #include "Entity.h"
 #include "Ball.h"
 
-#define SPEED_BOOST_INCREASE_PERCENT 2.f
+#define SPEED_BOOST_INCREASE_PERCENT 1.3f
 
 class Box;
+template<typename T>
+class StateMachine;
 
 class Player : public Entity
 {
@@ -18,6 +20,19 @@ protected:
 	virtual void OnDestroy() override;
 
 protected:
+
+	StateMachine<Player>* mpStateMachine;
+
+	enum State
+	{
+		Start,
+		Try,
+		Support,
+		Pass,
+		Defense,
+
+		Count
+	};
 
 	Ball* mBall;
 	Box* mDisplacementBoundingBox;
@@ -42,6 +57,8 @@ public:
 
 	void SetIsInvicible(bool isInvincible) { mIsInvincible = isInvincible; }
 	bool IsInvincible() const { return mIsInvincible; }
+
+	const char* GetStateName(State state);
 
 };
 

@@ -6,9 +6,12 @@
 
 #include <iostream>
 #include <limits>
+#include <time.h>
 
 void RugbyScene::OnInitialize()
 {
+	srand(time(NULL));
+
 	GreenTeamPoints = 0;
 	RedTeamPoints = 0;
 
@@ -26,7 +29,7 @@ void RugbyScene::OnInitialize()
 	CreateTeam(false, sf::Color::Red);  
 	SetPlayerPositions(false);
 	mBall = CreateEntity<Ball>(BALL_RADIUS, sf::Color(240, 95, 64));
-	GiveBallToPlayer(mPlayers[0]);
+	GiveBallToPlayer(mPlayers[rand() % 10]);
 }
 
 void RugbyScene::OnEvent(const sf::Event& event)

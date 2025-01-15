@@ -3,7 +3,7 @@
 #include "Ball.h"
 #include "Utils.h"
 
-bool PlayerCondition_AllyHasBall::OnTest(Player* player)
+bool RugbyPlayerCondition_AllyHasBall::OnTest(Player* player)
 {
 	RugbyScene* scene = player->GetScene<RugbyScene>();
 	Ball* ball = scene->GetBall(); 
@@ -11,7 +11,7 @@ bool PlayerCondition_AllyHasBall::OnTest(Player* player)
 	return ball->GetOwner()->GetTag() == player->GetTag();
 }
 
-bool PlayerCondition_ShouldPass::OnTest(Player* player)
+bool RubgyPlayerCondition_ShouldPass::OnTest(Player* player)
 {
     RugbyScene* scene = player->GetScene<RugbyScene>();
     Ball* ball = scene->GetBall();

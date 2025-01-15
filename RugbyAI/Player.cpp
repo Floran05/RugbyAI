@@ -1,11 +1,60 @@
 #include "Player.h"
 #include "RugbyScene.h"
 
+#include "StateMachine.h"
+#include "RugbyPlayerAction.h"
+#include "RugbyPlayerCondition.h"
+
+#include "Debug.h"
+
 void Player::OnInitialize()
 {
+	mpStateMachine = new StateMachine<Player>(this, (int)State::Count);
 	mInvincibilityDuration = 1.0f;
 	mSpeedBoostDuration = 1.5f;
 	mIsInvincible = false;
+
+	// Start
+	Action<Player>* action = mpStateMachine->CreateAction<RugbyPlayerAction_Start>(State::Start);
+	Transition<Player>* transition = action->CreateTransition(State::Try);
+	transition->AddCondition<RugbyPlayerCondition_HasBall>();
+	transition = action->CreateTransition(State::Support);
+	transition->AddCondition<RugbyPlayerCondition_AllyHasBall>();
+	transition = action->CreateTransition(State::Defense);
+	transition->AddCondition<RugbyPlayerCondition_AllyHasBall>(false);
+
+	// Try
+	action = mpStateMachine->CreateAction<RugbyPlayerAction_Try>(State::Try);
+	transition = action->CreateTransition(State::Defense);
+	transition->AddCondition<RugbyPlayerCondition_AllyHasBall>(false);
+	transition = action->CreateTransition(State::Pass);
+	transition->AddCondition<RugbyPlayerCondition_HasBall>();
+	transition->AddCondition<RubgyPlayerCondition_ShouldPass>();
+	transition->AddCondition<RugbyPlayerCondition_HasPlayerAbleToReceivePass>();
+
+	// Support
+	action = mpStateMachine->CreateAction<RugbyPlayerAction_Support>(State::Support);
+	transition = action->CreateTransition(State::Try);
+	transition->AddCondition<RugbyPlayerCondition_HasBall>();
+	transition = action->CreateTransition(State::Defense);
+	transition->AddCondition<RugbyPlayerCondition_AllyHasBall>(false);
+	transition->AddCondition<RugbyPlayerCondition_HasBall>(false);
+
+	// Defense
+	action = mpStateMachine->CreateAction<RubgyPlayerAction_Defense>(State::Defense);
+	transition = action->CreateTransition(State::Try);
+	transition->AddCondition<RugbyPlayerCondition_HasBall>();
+	transition = action->CreateTransition(State::Support);
+	transition->AddCondition<RugbyPlayerCondition_AllyHasBall>();
+
+	// Pass
+	action = mpStateMachine->CreateAction<RubgyPlayerAction_Pass>(State::Pass);
+	transition = action->CreateTransition(State::Defense);
+	transition->AddCondition<RugbyPlayerCondition_AllyHasBall>(false);
+	transition = action->CreateTransition(State::Support);
+	transition->AddCondition<RugbyPlayerCondition_AllyHasBall>();
+
+	mpStateMachine->SetState(State::Start);
 }
 
 void Player::OnUpdate()
@@ -34,6 +83,13 @@ void Player::OnUpdate()
 		newPosY = mDisplacementBoundingBox->yMax - (botRightPosition.y - topLeftPosition.y);
 	}
 	SetPosition(newPosX, newPosY, 0.f, 0.f);
+
+	// Draw state
+	const sf::Vector2f position = GetPosition();
+	const char* stateName = GetStateName((Player::State)mpStateMachine->GetCurrentState());
+	Debug::DrawText(position.x, position.y - 50, stateName, 0.5f, 0.5f, sf::Color::Red);
+
+	mpStateMachine->Update();
 }
 
 void Player::OnCollision(Entity* collidedWith)
@@ -64,4 +120,17 @@ void Player::RecoverBall(Ball* ball)
 
 	mBall = ball;
 	mBall->SetOwner(this);
+}
+
+const char* Player::GetStateName(State state)
+{
+	switch (state)
+	{
+	case State::Start: return "Start";
+	case State::Try: return "Try";
+	case State::Support: return "Support";
+	case State::Pass: return "Pass";
+	case State::Defense: return "Defense";
+	default: return "Unknown";
+	}
 }
