@@ -6,6 +6,10 @@
 #define ZONE_COUNT 3
 #define TRY_LANES_SCREEN_PERCENT 0.9f
 #define PLAYER_SPEED 150.f
+#define PLAYER_RADIUS 30.f
+#define BALL_SPEED 300.f
+#define MAX_PASS_DISTANCE 400.f
+#define ENEMY_DISTANCE 100.f
 
 class Ball;
 namespace sf
@@ -26,6 +30,20 @@ struct Box
 	constexpr bool IsPointInBox(int x, int y) const {
 		return x >= xMin && x <= xMax && y >= yMin && y <= yMax;
 	}
+};
+
+enum class PassStatus
+{
+	AllConditionsGood,
+	TooFar,
+	NearOpponent,
+	OpponentInPath
+};
+
+struct TargetPassStatus
+{
+	Player* target;
+	PassStatus status;
 };
 
 class RugbyScene : public Scene
@@ -62,5 +80,9 @@ public:
 	void OnGoal(const Tag team);
 	void SetPlayerPositions(bool isLeft);
 	void GiveBallToPlayer(Player* player);
+
+	std::vector<TargetPassStatus> FindEligiblePlayersForPass();
+	bool CanIntercept(int senderX, int senderY, int receiverX, int receiverY, int opponentX, int opponentY);
+
 };
 

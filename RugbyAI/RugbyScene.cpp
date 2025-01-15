@@ -2,6 +2,7 @@
 #include "Debug.h"
 #include "Player.h"
 #include "Ball.h"
+#include "Utils.h"
 
 #include <iostream>
 
@@ -24,6 +25,7 @@ void RugbyScene::OnInitialize()
 	CreateTeam(false, sf::Color::Red);  
 	SetPlayerPositions(false);
 	mBall = CreateEntity<Ball>(15.f, sf::Color(240, 95, 64));
+	GiveBallToPlayer(mPlayers[0]);
 }
 
 void RugbyScene::OnEvent(const sf::Event& event)
@@ -113,7 +115,31 @@ void RugbyScene::OnUpdate()
 	if (mSelectedPlayer)
 	{
 		const sf::Vector2f position = mSelectedPlayer->GetPosition();
-		Debug::DrawOutlinedCircle(position.x, position.y, mSelectedPlayer->GetRadius(), 4.f, sf::Color::Yellow);
+		Debug::DrawOutlinedCircle(position.x, position.y, mSelectedPlayer->GetRadius(), 4.f, sf::Color(248, 49, 242));
+		// Draw pass
+		if (mBall->GetOwner() && mSelectedPlayer == mBall->GetOwner())
+		{
+			const std::vector<TargetPassStatus> targets = FindEligiblePlayersForPass();
+			for (const TargetPassStatus& target : targets)
+			{
+				const sf::Vector2f targetPosition = target.target->GetPosition();
+				switch (target.status)
+				{
+				case PassStatus::AllConditionsGood:
+					Debug::DrawOutlinedCircle(targetPosition.x, targetPosition.y, target.target->GetRadius(), 4.f, sf::Color(11, 120, 211));
+					break;
+				case PassStatus::TooFar:
+					Debug::DrawOutlinedCircle(targetPosition.x, targetPosition.y, target.target->GetRadius(), 4.f, sf::Color(236, 236, 25));
+					break;
+				case PassStatus::NearOpponent:
+					Debug::DrawOutlinedCircle(targetPosition.x, targetPosition.y, target.target->GetRadius(), 4.f, sf::Color(211, 42, 11));
+					break;
+				case PassStatus::OpponentInPath:
+					Debug::DrawOutlinedCircle(targetPosition.x, targetPosition.y, target.target->GetRadius(), 4.f, sf::Color(151, 11, 211));
+					break;
+				}
+			}
+		}
 	}
 }
 
@@ -131,14 +157,13 @@ void RugbyScene::OnGoal(const Tag team)
 
 	SetPlayerPositions(true);
 	SetPlayerPositions(false);
+
+	// Random [1 - 5]
+	//GiveBallToPlayer(mPlayer[random + 5])
 }
-
-
 
 void RugbyScene::CreateTeam(bool isLeft, const sf::Color& color)
 {
-
-	float playerRadius = 30.f;
 	int playerIndex = isLeft ? 0 : 5;  
 
 	for (int zone = 0; zone < ZONE_COUNT; ++zone) {
@@ -151,7 +176,7 @@ void RugbyScene::CreateTeam(bool isLeft, const sf::Color& color)
 		}
 
 		for (int i = 0; i < playerCount; ++i) {
-			Player* pPlayer = CreateEntity<Player>(playerRadius, color);
+			Player* pPlayer = CreateEntity<Player>(PLAYER_RADIUS, color);
 
 		 
 			if (isLeft) {
@@ -168,7 +193,6 @@ void RugbyScene::CreateTeam(bool isLeft, const sf::Color& color)
 void RugbyScene::SetPlayerPositions(bool isLeft)
 {
 	int width = GetWindowWidth();
-	float playerRadius = 30.f;
 	float xStart;
 	if (isLeft) {
 		xStart = width * 0.15f;
@@ -197,16 +221,17 @@ void RugbyScene::SetPlayerPositions(bool isLeft)
 			}
 			else {
 				if (i == 0) {
-					posY = centerY - playerRadius * 2.f;
+					posY = centerY - PLAYER_RADIUS * 2.f;
 				}
 				else {
-					posY = centerY + playerRadius * 2.f;
+					posY = centerY + PLAYER_RADIUS * 2.f;
 				}
 			}
 
 			Player* pPlayer = mPlayers[playerIndex++];
 			pPlayer->SetPosition(xStart, posY, 0.5f, 0.5f);
 			pPlayer->SetDisplacementBoundingBox(&mAreas[zone]);
+			pPlayer->SetRigidBody(true);
 		}
 	}
 }
@@ -218,4 +243,70 @@ void RugbyScene::GiveBallToPlayer(Player* targetPlayer)
 		player->PassBall(targetPlayer);
 	}
 	targetPlayer->RecoverBall(mBall);
+}
+
+std::vector<TargetPassStatus> RugbyScene::FindEligiblePlayersForPass()
+{
+	Player* playerWithBall = mBall->GetOwner();
+	if (playerWithBall == nullptr) return std::vector<TargetPassStatus>();
+	const sf::Vector2f playerWithBallPosition = playerWithBall->GetPosition();
+
+	std::vector<TargetPassStatus> eligiblePlayers;
+	for (Player* player : mPlayers)
+	{
+		if (player == playerWithBall || !player->IsTag(playerWithBall->GetTag())) continue;
+		const sf::Vector2f playerPosition = player->GetPosition();
+		PassStatus status = PassStatus::AllConditionsGood;
+
+		// Check distance with teammate
+		if (Utils::GetDistance(playerWithBallPosition.x, playerWithBallPosition.y, playerPosition.x, playerPosition.y) > MAX_PASS_DISTANCE)
+		{
+			status = PassStatus::TooFar;
+		}
+
+		for (Player* opponent : mPlayers)
+		{
+			if (opponent->IsTag(playerWithBall->GetTag())) continue;
+			const sf::Vector2f opponentPosition = opponent->GetPosition();
+
+			// Check receiver opponents distance
+			if (Utils::GetDistance(playerPosition.x, playerPosition.y, opponentPosition.x, opponentPosition.y) < ENEMY_DISTANCE)
+			{
+				status = PassStatus::NearOpponent;
+				break;
+			}
+
+			// Check if opponent can intercept
+			if (CanIntercept(playerWithBallPosition.x, playerWithBallPosition.y, playerPosition.x, playerPosition.y, opponentPosition.x, opponentPosition.y))
+			{
+				status = PassStatus::OpponentInPath;
+				break;
+			}
+		}
+
+		eligiblePlayers.emplace_back(TargetPassStatus{player, status});
+	}
+
+	return eligiblePlayers;
+}
+
+bool RugbyScene::CanIntercept(int senderX, int senderY, int receiverX, int receiverY, int opponentX, int opponentY)
+{
+	if (opponentX < std::min((int)(senderX - PLAYER_RADIUS), (int)(receiverX - PLAYER_RADIUS))) return false;
+	if (opponentX > std::max((int)(senderX + PLAYER_RADIUS), (int)(receiverX + PLAYER_RADIUS))) return false;
+	if (opponentY < std::min((int)(senderY - PLAYER_RADIUS), (int)(receiverY - PLAYER_RADIUS))) return false;
+	if (opponentY > std::max((int)(senderY + PLAYER_RADIUS), (int)(receiverY + PLAYER_RADIUS))) return false;
+
+	const float a = receiverY - senderY;
+	const float b = -(receiverX - senderX);
+	const float c = -a * senderX - b * senderY;
+
+	const float distanceFromLine = Utils::DistanceFromPointToLine(a, b, c, opponentX, opponentY);
+
+	const float ballDistance = Utils::GetDistance(senderX, senderY, receiverX, receiverY);
+	const float ballTravelTime = ballDistance / BALL_SPEED;
+
+	const float opponentTravelTime = distanceFromLine / PLAYER_SPEED;
+
+	return opponentTravelTime <= ballTravelTime;
 }

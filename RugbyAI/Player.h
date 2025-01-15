@@ -28,5 +28,7 @@ public:
 	virtual void PassBall(Player* targetPlayer);
 	virtual void RecoverBall(Ball* ball);
 
+	int GetTag() const { return mTag; }
+
 };
 
