@@ -16,3 +16,13 @@ protected:
 	float mSpeedBoostTimer;
 
 };
+class RugbyPlayerAction_Support : public Action<Player>
+{
+public:
+	void OnStart(Player* pPlayer) override;
+	void OnUpdate(Player* pPlayer) override;
+	void OnEnd(Player* pPlayer) override;
+protected :
+	float TargetTryLanes;
+	Player* ballCarrier;
+};
