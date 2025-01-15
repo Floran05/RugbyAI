@@ -29,3 +29,13 @@ protected :
 	float mTargetX;
 	float mTargetY;
 };
+
+class RubgyPlayerAction_Pass : public Action<Player>
+{
+public:
+	void OnStart(Player* pPlayer) override;
+	void OnUpdate(Player* pPlayer) override;
+	void OnEnd(Player* pPlayer) override;
+};
+	
+};

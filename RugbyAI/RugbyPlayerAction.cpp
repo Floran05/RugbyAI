@@ -68,3 +68,21 @@ void RugbyPlayerAction_Support::OnEnd(Player* pPlayer)
 {
 
 }
+
+
+void RubgyPlayerAction_Pass::OnStart(Player* pPlayer)
+{
+	RugbyScene* scene = pPlayer->GetScene<RugbyScene>();
+	if (Player* target = scene->GetBestTeammateForPass())
+	{
+		pPlayer->PassBall(target);
+	}
+}
+
+void RubgyPlayerAction_Pass::OnUpdate(Player* pPlayer)
+{
+}
+
+void RubgyPlayerAction_Pass::OnEnd(Player* pPlayer)
+{
+}

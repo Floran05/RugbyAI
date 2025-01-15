@@ -15,7 +15,7 @@ bool PlayerCondition_ShouldPass::OnTest(Player* player)
 {
     RugbyScene* scene = player->GetScene<RugbyScene>();
     Ball* ball = scene->GetBall();
-    if (!ball->GetOwner() || ball->GetOwner() != player) return false;
+    if (!player->HasBall()) return false;
     Player** players = scene->GetPlayers();
     for (int i = 0; i < 10; ++i) {
         if (!players[i]) continue;
@@ -35,4 +35,10 @@ bool PlayerCondition_ShouldPass::OnTest(Player* player)
 bool RugbyPlayerCondition_HasBall::OnTest(Player* owner)
 {
 	return owner->HasBall();
+}
+
+bool RugbyPlayerCondition_HasPlayerAbleToReceivePass::OnTest(Player* owner)
+{
+    RugbyScene* scene = owner->GetScene<RugbyScene>();
+    return scene->GetBestTeammateForPass() != nullptr;
 }
