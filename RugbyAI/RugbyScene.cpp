@@ -158,8 +158,15 @@ void RugbyScene::OnGoal(const Tag team)
 	SetPlayerPositions(true);
 	SetPlayerPositions(false);
 
-	// Random [1 - 5]
-	//GiveBallToPlayer(mPlayer[random + 5])
+	int randomPlayerIndex;
+	if (team == Tag::PlayerGreen) {
+		randomPlayerIndex = 5 + (rand() % 5);
+	}
+	else {
+		randomPlayerIndex = rand() % 5;
+	}
+	 
+	GiveBallToPlayer(mPlayers[randomPlayerIndex]);
 }
 
 void RugbyScene::CreateTeam(bool isLeft, const sf::Color& color)
