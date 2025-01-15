@@ -84,5 +84,7 @@ public:
 	std::vector<TargetPassStatus> FindEligiblePlayersForPass();
 	bool CanIntercept(int senderX, int senderY, int receiverX, int receiverY, int opponentX, int opponentY);
 
+	Ball* GetBall() { return mBall; }
+	Player** GetPlayers(){ return mPlayers; }
 };
 
