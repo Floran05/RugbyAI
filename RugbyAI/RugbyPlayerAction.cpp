@@ -53,9 +53,6 @@ void RugbyPlayerAction_Support::OnUpdate(Player* pPlayer)
 		Utils::GetDistance(playerPos.x, playerPos.y, carrierPos.x, carrierPos.y) > safeDistance)
 	{
 		pPlayer->SetSpeed(PLAYER_SPEED);
-		if (pPlayer->GoToPosition(mTargetX, mTargetY, mfollowSpeed)) {
-			return;
-		}
 	}
 	else
 	{
