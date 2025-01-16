@@ -9,4 +9,5 @@ namespace Utils
 	float GetAngleDegree(const sf::Vector2f& v1, const sf::Vector2f& v2);
 
 	float DistanceFromPointToLine(float a, float b, float c, int x, int y);
+	sf::Vector2f ClosestPointOnSegment(int x1, int y1, int x2, int y2, int px, int py);
 }

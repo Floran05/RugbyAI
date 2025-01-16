@@ -87,6 +87,7 @@ public:
 	std::vector<TargetPassStatus> GetTeammatesPassStatus();
 	Player* GetBestTeammateForPass();
 	float InterceptionRisk(int senderX, int senderY, int receiverX, int receiverY, int opponentX, int opponentY);
+	Player* GetOpponentPlayerByIndex(Player* player, int targetIndex = -1);
 
 	Ball* GetBall() { return mBall; }
 	Player** GetPlayers(){ return mPlayers; }

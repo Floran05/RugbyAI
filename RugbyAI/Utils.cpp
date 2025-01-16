@@ -1,6 +1,7 @@
 #include <SFML/System/Vector2.hpp>
 
 #include <cmath>
+#include <algorithm>
 #include "Utils.h"
 
 namespace Utils 
@@ -38,5 +39,24 @@ namespace Utils
 	float Utils::DistanceFromPointToLine(float a, float b, float c, int x, int y)
 	{
 		return std::abs(a * x + b * y + c) / std::sqrt(a * a + b * b);
+	}
+	sf::Vector2f ClosestPointOnSegment(int x1, int y1, int x2, int y2, int px, int py)
+	{
+		float dx = x2 - x1;
+		float dy = y2 - y1;
+
+		float vx = px - x1;
+		float vy = py - y1;
+
+		float dot = vx * dx + vy * dy;
+		float squared = dx * dx + dy * dy;
+		float norm = dot / squared;
+
+		norm = std::max(0.f, std::min(1.f, norm));
+
+		float targetX = x1 + norm * dx;
+		float targetY = y1 + norm * dy;
+
+		return sf::Vector2f(targetX, targetY);
 	}
 }

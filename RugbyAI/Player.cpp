@@ -10,7 +10,7 @@
 void Player::OnInitialize()
 {
 	mpStateMachine = new StateMachine<Player>(this, (int)State::Count);
-	mInvincibilityDuration = 3.0f;
+	mInvincibilityDuration = 1.0f;
 	mSpeedBoostDuration = 1.5f;
 	mIsInvincible = false;
 
@@ -109,11 +109,18 @@ void Player::OnCollision(Entity* collidedWith)
 	if (Player* player = dynamic_cast<Player*>(collidedWith))
 	{
 		scene->GiveBallToPlayer(player);
+		// Set invincible to avoid other pass during frame
+		player->SetIsInvicible(true);
 	}
 }
 
 void Player::OnDestroy()
 {
+}
+
+std::string Player::GetName() const
+{
+	return std::string(IsTag(RugbyScene::Tag::PlayerGreen) ? "G" : "R") + std::to_string(mIndex + 1);
 }
 
 bool Player::HasBall() const

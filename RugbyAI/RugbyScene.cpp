@@ -214,12 +214,11 @@ void RugbyScene::CreateTeam(bool isLeft, const sf::Color& color)
 		 
 			if (isLeft) {
 				pPlayer->SetTag(RugbyScene::Tag::PlayerGreen);
-				pPlayer->SetName("G" + std::to_string(playerIndex + 1));
 			}
 			else {
 				pPlayer->SetTag(RugbyScene::Tag::PlayerRed);
-				pPlayer->SetName("R" + std::to_string(playerIndex % 5 + 1));
 			}
+			pPlayer->SetIndex(playerIndex % 5);
 
 			mPlayers[playerIndex++] = pPlayer;  
 		}
@@ -375,4 +374,19 @@ float RugbyScene::InterceptionRisk(int senderX, int senderY, int receiverX, int 
 	const float opponentTravelTime = distanceFromLine / PLAYER_SPEED;
 
 	return opponentTravelTime <= ballTravelTime ? (1.f / (distanceFromLine + 1.f)) : 0.f;
+}
+
+Player* RugbyScene::GetOpponentPlayerByIndex(Player* player, int targetIndex)
+{
+	if (targetIndex < 0)
+	{
+		targetIndex = player->GetIndex();
+	}
+
+	const bool isGreenTeam = player->IsTag(Tag::PlayerGreen);
+	targetIndex = isGreenTeam ? targetIndex + 5 : targetIndex;
+
+	if (targetIndex > 9) return nullptr;
+
+	return mPlayers[targetIndex];
 }

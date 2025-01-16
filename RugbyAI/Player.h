@@ -35,6 +35,7 @@ protected:
 	};
 
 	sf::String mName;
+	int mIndex;
 
 	Box* mDisplacementBoundingBox;
 
@@ -45,8 +46,10 @@ protected:
 
 public:
 
-	void SetName(const sf::String& name) { mName = name; }
-	sf::String GetName() const { return mName; }
+	std::string GetName() const;
+
+	void SetIndex(int index) { mIndex = index; }
+	int GetIndex() const { return mIndex; }
 
 	void SetDisplacementBoundingBox(Box* displacementBox) { mDisplacementBoundingBox = displacementBox; };
 	Box* GetDisplacementBoundingBox() const { return mDisplacementBoundingBox; }

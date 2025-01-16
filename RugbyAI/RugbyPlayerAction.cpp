@@ -64,6 +64,7 @@ void RugbyPlayerAction_Support::OnUpdate(Player* pPlayer)
 		pPlayer->SetSpeed(mfollowSpeed);
 	}*/
 
+	mBallCarrier = pPlayer->GetScene<RugbyScene>()->GetBall()->GetOwner();
 	if (mBallCarrier == nullptr || mBallCarrier == pPlayer) return;
 	float playerY = pPlayer->GetPosition().y;
 	float carrierX = mBallCarrier->GetPosition().x;
@@ -103,10 +104,27 @@ void RubgyPlayerAction_Defense::OnStart(Player* pPlayer)
 
 void RubgyPlayerAction_Defense::OnUpdate(Player* pPlayer)
 {
-	if (Player* target = pPlayer->GetScene<RugbyScene>()->GetBall()->GetOwner()) {
+	/*if (Player* target = pPlayer->GetScene<RugbyScene>()->GetBall()->GetOwner()) {
 		const sf::Vector2f targetPosition = target->GetPosition();
 		pPlayer->GoToPosition(targetPosition.x, targetPosition.y);
-	}
+	}*/
+	RugbyScene* scene = pPlayer->GetScene<RugbyScene>();
+	if (scene == nullptr) return;
+
+	Player* carrier = scene->GetBall()->GetOwner();
+	Player* opponent = scene->GetOpponentPlayerByIndex(pPlayer);
+
+	if (!carrier || !opponent) return;
+
+	const int indexDiff = std::abs(carrier->GetIndex() - pPlayer->GetIndex());
+	pPlayer->SetSpeed(PLAYER_SPEED * (1.f - ((4 - indexDiff) * 0.1f)));
+
+	const sf::Vector2f carrierPosition = carrier->GetPosition();
+	const sf::Vector2f opponentPosition = opponent->GetPosition();
+	const sf::Vector2f position = pPlayer->GetPosition();
+	const sf::Vector2f targetPosition = Utils::ClosestPointOnSegment(carrierPosition.x, carrierPosition.y, opponentPosition.x, opponentPosition.y, position.x, position.y);
+
+	pPlayer->GoToPosition(targetPosition.x, targetPosition.y);
 }
 
 void RubgyPlayerAction_Defense::OnEnd(Player* pPlayer)
