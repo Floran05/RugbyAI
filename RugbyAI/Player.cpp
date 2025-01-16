@@ -10,7 +10,7 @@
 void Player::OnInitialize()
 {
 	mpStateMachine = new StateMachine<Player>(this, (int)State::Count);
-	mInvincibilityDuration = 1.0f;
+	mInvincibilityDuration = 3.0f;
 	mSpeedBoostDuration = 1.5f;
 	mIsInvincible = false;
 
@@ -104,7 +104,7 @@ void Player::OnUpdate()
 void Player::OnCollision(Entity* collidedWith)
 {
 	if (IsInvincible() || !HasBall() || collidedWith->IsTag(GetTag()) || collidedWith->IsTag(RugbyScene::Tag::RugbyBall)) return;
-
+	
 	RugbyScene* scene = GetScene<RugbyScene>();
 	if (Player* player = dynamic_cast<Player*>(collidedWith))
 	{
@@ -120,7 +120,7 @@ bool Player::HasBall() const
 {
 	if (RugbyScene* scene = GetScene<RugbyScene>())
 	{
-		return scene->GetBall()->GetOwner() == this;
+		return scene->GetBall()->GetOwner() == this && scene->GetBall()->GetTarget() == nullptr;
 	}
 	return false;
 }
