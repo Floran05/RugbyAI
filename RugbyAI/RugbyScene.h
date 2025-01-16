@@ -6,9 +6,9 @@
 #define ZONE_COUNT 3
 #define TRY_LANES_SCREEN_PERCENT 0.9f
 #define PLAYER_SPEED 150.f
-#define PLAYER_RADIUS 30.f
+#define PLAYER_RADIUS 20.f
 #define BALL_SPEED 600.f
-#define BALL_RADIUS 15.f
+#define BALL_RADIUS 10.f
 #define MAX_PASS_DISTANCE 400.f
 #define ENEMY_DISTANCE 100.f
 

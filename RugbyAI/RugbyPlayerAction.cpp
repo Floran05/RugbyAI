@@ -116,13 +116,24 @@ void RubgyPlayerAction_Defense::OnUpdate(Player* pPlayer)
 
 	if (!carrier || !opponent) return;
 
+	const bool isGreenTeam = pPlayer->IsTag(RugbyScene::Tag::PlayerGreen);
 	const int indexDiff = std::abs(carrier->GetIndex() - pPlayer->GetIndex());
-	pPlayer->SetSpeed(PLAYER_SPEED * (1.f - ((4 - indexDiff) * 0.1f)));
-
 	const sf::Vector2f carrierPosition = carrier->GetPosition();
 	const sf::Vector2f opponentPosition = opponent->GetPosition();
 	const sf::Vector2f position = pPlayer->GetPosition();
 	const sf::Vector2f targetPosition = Utils::ClosestPointOnSegment(carrierPosition.x, carrierPosition.y, opponentPosition.x, opponentPosition.y, position.x, position.y);
+	
+	bool isOnTeamSide = true;
+	if (isGreenTeam && position.x > carrierPosition.x) isOnTeamSide = false;
+	if (!isGreenTeam && position.x < carrierPosition.x) isOnTeamSide = false;
+	if (isOnTeamSide)
+	{
+		pPlayer->SetSpeed(PLAYER_SPEED * (1.f - ((4 - indexDiff) * 0.1f)));
+	}
+	else
+	{
+		pPlayer->SetSpeed(PLAYER_SPEED);
+	}
 
 	pPlayer->GoToPosition(targetPosition.x, targetPosition.y);
 }
