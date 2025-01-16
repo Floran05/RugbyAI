@@ -3,6 +3,8 @@
 #include "Action.h"
 #include "Player.h"
 
+#define SUPPORT_SAFE_DISTANCE 15.f
+
 class RugbyPlayerAction_Try : public Action<Player>
 {
 public:
@@ -24,7 +26,7 @@ public:
 	void OnEnd(Player* pPlayer) override;
 protected :
 	float mTargetTryLanes;
-	Player* mballCarrier;
+	Player* mBallCarrier;
 	float mfollowSpeed;
 	float mTargetX;
 	float mTargetY;

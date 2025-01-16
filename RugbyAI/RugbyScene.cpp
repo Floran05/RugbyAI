@@ -15,6 +15,7 @@ void RugbyScene::OnInitialize()
 	GreenTeamPoints = 0;
 	RedTeamPoints = 0;
 
+	// Create areas
 	int width = GetWindowWidth();
 	int height = GetWindowHeight();
 	float zoneHeight = height / (ZONE_COUNT * 2.f - 2);
@@ -24,11 +25,18 @@ void RugbyScene::OnInitialize()
 		int yMax = yMin + zoneHeight * 2;
 		mAreas[i] = { 0, width, yMin, yMax };
 	}
+
+	// Init teams
 	CreateTeam(true, sf::Color::Green);  
 	SetPlayerPositions(true);
 	CreateTeam(false, sf::Color::Red);  
 	SetPlayerPositions(false);
+
+	// Create ball
 	mBall = CreateEntity<Ball>(BALL_RADIUS, sf::Color(240, 95, 64));
+	mBall->SetPosition(width * 0.5f, height * 0.5f);
+
+	// Give ball to random player
 	GiveBallToPlayer(mPlayers[rand() % 10]);
 }
 
@@ -71,9 +79,12 @@ void RugbyScene::OnEvent(const sf::Event& event)
 		// Events on selected player
 		if (mSelectedPlayer == nullptr) return;
 
-		if (event.key.code == sf::Keyboard::Space)
+		if (event.key.code == sf::Keyboard::Space && mBall->GetOwner())
 		{
-			// Force pass
+			if (Player* target = GetBestTeammateForPass())
+			{
+				mBall->GetOwner()->PassBall(target);
+			}
 		}
 	}
 }
@@ -85,12 +96,6 @@ void RugbyScene::OnUpdate()
 	int windowHeight = GetWindowHeight();
 	Debug::DrawLine(windowWidth * TRY_LANES_SCREEN_PERCENT, 0, windowWidth * TRY_LANES_SCREEN_PERCENT, windowHeight, sf::Color::White);
 	Debug::DrawLine(windowWidth * (1.f - TRY_LANES_SCREEN_PERCENT), 0, windowWidth * (1.f - TRY_LANES_SCREEN_PERCENT), windowHeight, sf::Color::White);
-	/*for (int i = 0; i < ZONE_COUNT; ++i)
-	{
-		const Box& box = mAreas[i];
-
-		Debug::DrawRectangle(box.xMin, box.yMin, box.width, box.height, mColors[i]);
-	}*/
 	
 	// Check if goal
 	if (const Player* owner = mBall->GetOwner())
@@ -114,7 +119,7 @@ void RugbyScene::OnUpdate()
 	}
 
 	// Draw points
-	Debug::DrawText(10.f, 10.f, std::to_string(GreenTeamPoints) + " - " + std::to_string(RedTeamPoints), sf::Color::White);
+	Debug::DrawText(windowWidth * 0.5f, 10.f, std::to_string(GreenTeamPoints) + " - " + std::to_string(RedTeamPoints), 0.5f, 0.5f, sf::Color::White);
 	// Show selected player
 	if (mSelectedPlayer)
 	{
@@ -209,9 +214,11 @@ void RugbyScene::CreateTeam(bool isLeft, const sf::Color& color)
 		 
 			if (isLeft) {
 				pPlayer->SetTag(RugbyScene::Tag::PlayerGreen);
+				pPlayer->SetName("G" + std::to_string(playerIndex + 1));
 			}
 			else {
 				pPlayer->SetTag(RugbyScene::Tag::PlayerRed);
+				pPlayer->SetName("R" + std::to_string(playerIndex % 5 + 1));
 			}
 
 			mPlayers[playerIndex++] = pPlayer;  
@@ -267,19 +274,13 @@ void RugbyScene::SetPlayerPositions(bool isLeft)
 
 void RugbyScene::GiveBallToPlayer(Player* targetPlayer)
 {
-	for (Player* player : mPlayers)
-	{
-		player->PassBall(targetPlayer);
-	}
-	targetPlayer->RecoverBall(mBall);
+	mBall->SetTarget(nullptr);
+	mBall->SetOwner(targetPlayer);
+	mBall->TeleportToOwner();
 }
 
 std::vector<TargetPassStatus> RugbyScene::GetTeammatesPassStatus()
 {
-	// Check if behind
-	// Better check for opponent position
-
-
 	Player* playerWithBall = mBall->GetOwner();
 	if (playerWithBall == nullptr) return std::vector<TargetPassStatus>();
 	const sf::Vector2f playerWithBallPosition = playerWithBall->GetPosition();
@@ -293,6 +294,13 @@ std::vector<TargetPassStatus> RugbyScene::GetTeammatesPassStatus()
 		float distanceScore = 0.f;
 		float opponentScore = 0.f;
 		float interceptionScore = 0.f;
+
+		// Check if ahead of carrier
+		if ((player->IsTag(Tag::PlayerGreen) && playerPosition.x > playerWithBallPosition.x) || 
+			(player->IsTag(Tag::PlayerRed)	 && playerPosition.x < playerWithBallPosition.x))
+		{
+			status = PassStatus::AheadCarrier;
+		}
 
 		// Check distance with teammate
 		const float distanceWithTeammate = Utils::GetDistance(playerWithBallPosition.x, playerWithBallPosition.y, playerPosition.x, playerPosition.y);

@@ -1,6 +1,7 @@
 #include "RugbyPlayerAction.h"
 #include "RugbyScene.h"
 #include "Utils.h"
+
 void RugbyPlayerAction_Try::OnStart(Player* pPlayer)
 {
 	mInvincibilityTimer = pPlayer->GetInvicibilityDuration();
@@ -30,14 +31,15 @@ void RugbyPlayerAction_Try::OnUpdate(Player* pPlayer)
 
 void RugbyPlayerAction_Try::OnEnd(Player* pPlayer)
 {
-
+	pPlayer->SetIsInvicible(false);
+	pPlayer->SetSpeed(PLAYER_SPEED);
 }
 
 void RugbyPlayerAction_Support::OnStart(Player* pPlayer)
 {
 	int windowWidth = pPlayer->GetScene()->GetWindowWidth();
 	mTargetTryLanes = pPlayer->IsTag(RugbyScene::Tag::PlayerGreen) ? windowWidth : 0;
-	mballCarrier = pPlayer->GetScene<RugbyScene>()->GetBall()->GetOwner();
+	mBallCarrier = pPlayer->GetScene<RugbyScene>()->GetBall()->GetOwner();
 	float followSpeed = PLAYER_SPEED;
 	pPlayer->SetSpeed(PLAYER_SPEED);
 	mTargetX = mTargetTryLanes;
@@ -47,7 +49,7 @@ void RugbyPlayerAction_Support::OnStart(Player* pPlayer)
 
 void RugbyPlayerAction_Support::OnUpdate(Player* pPlayer)
 {
-	if (!mballCarrier || mballCarrier == pPlayer) return;
+	/*if (!mballCarrier || mballCarrier == pPlayer) return;
 	float safeDistance = 50.0f;
 	sf::Vector2f playerPos = pPlayer->GetPosition();
 	sf::Vector2f carrierPos = mballCarrier->GetPosition();
@@ -60,7 +62,15 @@ void RugbyPlayerAction_Support::OnUpdate(Player* pPlayer)
 	{
 		mfollowSpeed*=0.7;
 		pPlayer->SetSpeed(mfollowSpeed);
-	}
+	}*/
+
+	if (mBallCarrier == nullptr || mBallCarrier == pPlayer) return;
+	float playerY = pPlayer->GetPosition().y;
+	float carrierX = mBallCarrier->GetPosition().x;
+	float targetX = pPlayer->IsTag(RugbyScene::Tag::PlayerGreen) ? carrierX - SUPPORT_SAFE_DISTANCE : carrierX + SUPPORT_SAFE_DISTANCE;
+
+	pPlayer->GoToPosition(targetX, playerY);
+
 }
 
 void RugbyPlayerAction_Support::OnEnd(Player* pPlayer)

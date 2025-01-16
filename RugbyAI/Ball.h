@@ -16,11 +16,17 @@ protected:
 protected:
 
 	Player* mOwner;
+	Player* mTarget;
 
 public:
 
 	void SetOwner(Player* owner) { mOwner = owner; }
 	Player* GetOwner() const { return mOwner; }
+
+	void SetTarget(Player* target) { mTarget = target; }
+	Player* GetTarget() const { return mTarget; }
+
+	void TeleportToOwner();
 
 };
 

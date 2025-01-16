@@ -87,18 +87,28 @@ void Player::OnUpdate()
 	// Draw state
 	const sf::Vector2f position = GetPosition();
 	const char* stateName = GetStateName((Player::State)mpStateMachine->GetCurrentState());
-	Debug::DrawText(position.x, position.y - 50, stateName, 0.5f, 0.5f, sf::Color::Red);
+	Debug::DrawText(position.x, position.y - 50, stateName, 0.5f, 0.5f, sf::Color::Black, 1.f, sf::Color::White);
+
+	// Draw name
+	Debug::DrawText(position.x, position.y, GetName(), 0.5f, 0.5f, sf::Color::Black);
+
+	// Draw invincibility
+	if (IsInvincible())
+	{
+		Debug::DrawOutlinedCircle(position.x, position.y, GetRadius() - 4.f, 4.f, sf::Color::Black);
+	}
 
 	mpStateMachine->Update();
 }
 
 void Player::OnCollision(Entity* collidedWith)
 {
-	if (IsInvincible() || collidedWith->IsTag(GetTag()) || collidedWith->IsTag(RugbyScene::Tag::RugbyBall)) return;
+	if (IsInvincible() || !HasBall() || collidedWith->IsTag(GetTag()) || collidedWith->IsTag(RugbyScene::Tag::RugbyBall)) return;
 
+	RugbyScene* scene = GetScene<RugbyScene>();
 	if (Player* player = dynamic_cast<Player*>(collidedWith))
 	{
-		PassBall(player);
+		scene->GiveBallToPlayer(player);
 	}
 }
 
@@ -106,20 +116,28 @@ void Player::OnDestroy()
 {
 }
 
-void Player::PassBall(Player* targetPlayer)
+bool Player::HasBall() const
 {
-	if (mBall == nullptr || targetPlayer == this) return;
-
-	targetPlayer->RecoverBall(mBall);
-	mBall = nullptr;
+	if (RugbyScene* scene = GetScene<RugbyScene>())
+	{
+		return scene->GetBall()->GetOwner() == this;
+	}
+	return false;
 }
 
-void Player::RecoverBall(Ball* ball)
+void Player::PassBall(Player* target)
 {
-	if (mBall) return;
+	if (target == nullptr) return;
 
-	mBall = ball;
-	mBall->SetOwner(this);
+	if (RugbyScene* scene = GetScene<RugbyScene>())
+	{
+		scene->GetBall()->SetTarget(target);
+	}
+}
+
+void Player::SetIsInvicible(bool isInvincible)
+{
+	mIsInvincible = isInvincible;
 }
 
 const char* Player::GetStateName(State state)

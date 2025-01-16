@@ -82,12 +82,12 @@ void Debug::DrawOutlinedCircle(float x, float y, float radius, float thickness, 
 	Debug::Get()->mCircles.push_back(circle);
 }
 
-void Debug::DrawText(float x, float y, const std::string& text, const sf::Color& color)
+void Debug::DrawText(float x, float y, const std::string& text, const sf::Color& color, float outlineThickness, const sf::Color& outlineColor)
 {
-	DrawText(x, y, text, 0.f, 0.f, color);
+	DrawText(x, y, text, 0.f, 0.f, color, outlineThickness, outlineColor);
 }
 
-void Debug::DrawText(float x, float y, const std::string& text, float ratioX, float ratioY, const sf::Color& color)
+void Debug::DrawText(float x, float y, const std::string& text, float ratioX, float ratioY, const sf::Color& color, float outlineThickness, const sf::Color& outlineColor)
 {
 	_ASSERT(ratioX >= 0.f && ratioX <= 1.f);
 	_ASSERT(ratioY >= 0.f && ratioY <= 1.f);
@@ -99,6 +99,8 @@ void Debug::DrawText(float x, float y, const std::string& text, float ratioX, fl
 	sfText.setCharacterSize(20);
 	sfText.setFillColor(color);
 	sfText.setPosition(x, y);
+	sfText.setOutlineThickness(outlineThickness);
+	sfText.setOutlineColor(outlineColor);
 
 	const sf::FloatRect& bounds = sfText.getLocalBounds();
 	sfText.setOrigin(bounds.width * ratioX, bounds.height * ratioY);

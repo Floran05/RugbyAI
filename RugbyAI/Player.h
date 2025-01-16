@@ -34,7 +34,8 @@ protected:
 		Count
 	};
 
-	Ball* mBall;
+	sf::String mName;
+
 	Box* mDisplacementBoundingBox;
 
 	float mInvincibilityDuration;
@@ -44,18 +45,20 @@ protected:
 
 public:
 
-	virtual void SetDisplacementBoundingBox(Box* displacementBox) { mDisplacementBoundingBox = displacementBox; };
-	virtual Box* GetDisplacementBoundingBox() const { return mDisplacementBoundingBox; }
+	void SetName(const sf::String& name) { mName = name; }
+	sf::String GetName() const { return mName; }
 
-	virtual bool HasBall() const { return mBall != nullptr; }
-	virtual void PassBall(Player* targetPlayer);
-	virtual void RecoverBall(Ball* ball);
+	void SetDisplacementBoundingBox(Box* displacementBox) { mDisplacementBoundingBox = displacementBox; };
+	Box* GetDisplacementBoundingBox() const { return mDisplacementBoundingBox; }
+
+	bool HasBall() const;
+	void PassBall(Player* target);
 
 	int GetTag() const { return mTag; }
 	float GetInvicibilityDuration() const { return mInvincibilityDuration; }
 	float GetSpeedBoostDuration() const { return mSpeedBoostDuration; }
 
-	void SetIsInvicible(bool isInvincible) { mIsInvincible = isInvincible; }
+	void SetIsInvicible(bool isInvincible);
 	bool IsInvincible() const { return mIsInvincible; }
 
 	const char* GetStateName(State state);
