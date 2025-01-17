@@ -318,7 +318,7 @@ std::vector<TargetPassStatus> RugbyScene::GetTeammatesPassStatus()
 			// Check receiver opponents distance
 			const float receiverOpponentDistance = Utils::GetDistance(playerPosition.x, playerPosition.y, opponentPosition.x, opponentPosition.y);
 			opponentScore += 1.f / (receiverOpponentDistance + 1.f);
-			if (receiverOpponentDistance < ENEMY_DISTANCE)
+			if (receiverOpponentDistance < OPPONENT_DISTANCE)
 			{
 				status = PassStatus::NearOpponent;
 				break;
@@ -389,4 +389,30 @@ Player* RugbyScene::GetOpponentPlayerByIndex(Player* player, int targetIndex)
 	if (targetIndex > 9) return nullptr;
 
 	return mPlayers[targetIndex];
+}
+
+Player* RugbyScene::GetNearestOpponentAhead(Player* player)
+{
+	const bool isGreenTeam = player->IsTag(Tag::PlayerGreen);
+	const sf::Vector2f position = player->GetPosition();
+
+	const int start = isGreenTeam ? 5 : 0;
+	const int end = start + 5;
+
+	float minDistance = 0.f;
+	int minIndex = -1;
+	for (int i = start; i < end; ++i)
+	{
+		const sf::Vector2f targetPosition = mPlayers[i]->GetPosition();
+		if ((isGreenTeam && targetPosition.x < position.x) || (!isGreenTeam && targetPosition.x > position.x)) continue;
+		const float distance = Utils::GetDistance(position.x, position.y, targetPosition.x, targetPosition.y);
+		if (minIndex < 0 || distance < minDistance)
+		{
+			minDistance = distance;
+			minIndex = i;
+		}
+	}
+	if (minIndex < 0) return nullptr;
+
+	return mPlayers[minIndex];
 }

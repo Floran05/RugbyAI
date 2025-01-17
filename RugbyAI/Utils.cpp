@@ -1,3 +1,5 @@
+#define _USE_MATH_DEFINES
+
 #include <SFML/System/Vector2.hpp>
 
 #include <cmath>
@@ -36,10 +38,12 @@ namespace Utils
 
 		return std::atan2(det, dot) * 180 / 3.14159265;
 	}
+
 	float Utils::DistanceFromPointToLine(float a, float b, float c, int x, int y)
 	{
 		return std::abs(a * x + b * y + c) / std::sqrt(a * a + b * b);
 	}
+
 	sf::Vector2f ClosestPointOnSegment(int x1, int y1, int x2, int y2, int px, int py)
 	{
 		float dx = x2 - x1;
@@ -58,5 +62,21 @@ namespace Utils
 		float targetY = y1 + norm * dy;
 
 		return sf::Vector2f(targetX, targetY);
+	}
+
+	float Lerp(float a, float b, float t)
+	{
+		return a + t * (b - a);
+	}
+
+	sf::Vector2f RotateVector(const sf::Vector2f& v, float degrees)
+	{
+		float rad = degrees * M_PI / 180.f;
+
+		sf::Vector2f rotated;
+		rotated.x = v.x * std::cos(rad) - v.y * std::sin(rad);
+		rotated.y = v.x * std::sin(rad) + v.y * std::cos(rad);
+
+		return rotated;
 	}
 }

@@ -25,7 +25,7 @@ bool RubgyPlayerCondition_ShouldPass::OnTest(Player* player)
             players[i]->GetPosition().x, players[i]->GetPosition().y
         );
 
-        if (distance <= ENEMY_DISTANCE) {
+        if (distance <= OPPONENT_DISTANCE) {
             return true; 
         }
     }

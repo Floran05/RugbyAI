@@ -5,12 +5,12 @@
 
 #define ZONE_COUNT 3
 #define TRY_LANES_SCREEN_PERCENT 0.9f
-#define PLAYER_SPEED 150.f
+#define PLAYER_SPEED 100.f
 #define PLAYER_RADIUS 20.f
 #define BALL_SPEED 600.f
 #define BALL_RADIUS 10.f
 #define MAX_PASS_DISTANCE 400.f
-#define ENEMY_DISTANCE 100.f
+#define OPPONENT_DISTANCE 100.f
 
 class Ball;
 namespace sf
@@ -88,6 +88,7 @@ public:
 	Player* GetBestTeammateForPass();
 	float InterceptionRisk(int senderX, int senderY, int receiverX, int receiverY, int opponentX, int opponentY);
 	Player* GetOpponentPlayerByIndex(Player* player, int targetIndex = -1);
+	Player* GetNearestOpponentAhead(Player* player);
 
 	Ball* GetBall() { return mBall; }
 	Player** GetPlayers(){ return mPlayers; }
