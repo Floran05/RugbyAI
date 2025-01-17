@@ -17,6 +17,8 @@ protected:
 	float mInvincibilityTimer;
 	float mSpeedBoostTimer;
 
+	Player* mTarget;
+
 };
 class RugbyPlayerAction_Support : public Action<Player>
 {

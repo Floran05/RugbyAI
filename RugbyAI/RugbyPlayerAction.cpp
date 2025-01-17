@@ -2,10 +2,13 @@
 #include "RugbyScene.h"
 #include "Utils.h"
 
+#include <iostream>
+
 void RugbyPlayerAction_Try::OnStart(Player* pPlayer)
 {
 	mInvincibilityTimer = pPlayer->GetInvicibilityDuration();
 	mSpeedBoostTimer = pPlayer->GetSpeedBoostDuration();
+	mTarget = nullptr;
 
 	pPlayer->SetIsInvicible(true);
 	pPlayer->SetSpeed(PLAYER_SPEED * SPEED_BOOST_INCREASE_PERCENT);
@@ -14,7 +17,6 @@ void RugbyPlayerAction_Try::OnStart(Player* pPlayer)
 
 void RugbyPlayerAction_Try::OnUpdate(Player* pPlayer)
 {
-	if (mInvincibilityTimer < 0.f && mSpeedBoostTimer < 0.f) return;
 	const float deltaTime = GameManager::Get()->GetDeltaTime();
 	mInvincibilityTimer -= deltaTime;
 	mSpeedBoostTimer -= deltaTime;
@@ -27,6 +29,43 @@ void RugbyPlayerAction_Try::OnUpdate(Player* pPlayer)
 	{
 		pPlayer->SetSpeed(PLAYER_SPEED);
 	}
+
+	/*if (RugbyScene* scene = pPlayer->GetScene<RugbyScene>())
+	{
+		Player* nearestPlayer = mTarget;
+		if (mTarget == nullptr)
+		{
+			nearestPlayer = scene->GetNearestOpponentAhead(pPlayer);
+		}
+		if (nearestPlayer == nullptr)
+		{
+			pPlayer->GoToDirection(pPlayer->IsTag(RugbyScene::Tag::PlayerGreen) ? 1.f : -1.f, 0.f);
+			return;
+		}
+
+		mTarget = nearestPlayer;
+
+		const sf::Vector2f position = pPlayer->GetPosition();
+		const sf::Vector2f nearestPlayerPosition = nearestPlayer->GetPosition();
+		const float distance = Utils::GetDistance(position.x, position.y, nearestPlayerPosition.x, nearestPlayerPosition.y);
+		if (distance > OPPONENT_DISTANCE * 1.5f) return;
+
+		const sf::Vector2f playerToOpponentVector(nearestPlayerPosition.x - position.x, nearestPlayerPosition.y - position.y);
+		sf::Vector2f normPTO = playerToOpponentVector;
+		Utils::Normalize(normPTO);
+		sf::Vector2f maxVector(0.2f, 0.8f);
+		if (playerToOpponentVector.x < 0.f) maxVector.x *= -1.f;
+		if (playerToOpponentVector.y > 0.f) maxVector.y *= -1.f;
+		Utils::Normalize(maxVector);
+		const float totalAngle = Utils::GetAngleDegree(normPTO, maxVector);
+		const float targetAngle = Utils::Lerp(0, totalAngle, 1.f - (distance / OPPONENT_DISTANCE * 1.5f));
+
+		sf::Vector2f targetVector = Utils::RotateVector(playerToOpponentVector, targetAngle);
+		std::cout << "maxAngle: " << maxVector.x << ", " << maxVector.y << " | totalAngle: " << totalAngle << " ToOpponentVector: " << playerToOpponentVector.x << ", " << playerToOpponentVector.y << " | GO TO DIRECTION: " << targetVector.x << ", " << targetVector.y << " | Nearest opponent: " << nearestPlayer->GetName() << std::endl;
+		Utils::Normalize(targetVector);
+		pPlayer->SetDirection(targetVector.x, targetVector.y);
+	}*/
+
 }
 
 void RugbyPlayerAction_Try::OnEnd(Player* pPlayer)

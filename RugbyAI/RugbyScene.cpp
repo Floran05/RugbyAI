@@ -27,13 +27,13 @@ void RugbyScene::OnInitialize()
 	}
 
 	// Init teams
-	CreateTeam(true, sf::Color::Green);  
+	CreateTeam(true, sf::Color(0, 200, 0));  
 	SetPlayerPositions(true);
-	CreateTeam(false, sf::Color::Red);  
+	CreateTeam(false, sf::Color(200, 0, 0));
 	SetPlayerPositions(false);
 
 	// Create ball
-	mBall = CreateEntity<Ball>(BALL_RADIUS, sf::Color(240, 95, 64));
+	mBall = CreateEntity<Ball>(BALL_RADIUS, sf::Color::White);
 	mBall->SetPosition(width * 0.5f, height * 0.5f);
 
 	// Give ball to random player
@@ -124,7 +124,7 @@ void RugbyScene::OnUpdate()
 	if (mSelectedPlayer)
 	{
 		const sf::Vector2f position = mSelectedPlayer->GetPosition();
-		Debug::DrawOutlinedCircle(position.x, position.y, BALL_RADIUS + 2.f, mSelectedPlayer->GetRadius() - 10.f - BALL_RADIUS, sf::Color(248, 49, 242)); // Pink
+		Debug::DrawOutlinedCircle(position.x, position.y, BALL_RADIUS, mSelectedPlayer->GetRadius() - 4.f - BALL_RADIUS, sf::Color(248, 49, 242));
 	}
 	// Draw pass
 	if (mBall->GetOwner())
@@ -164,7 +164,7 @@ void RugbyScene::OnUpdate()
 		if (maxScoreIndex >= 0)
 		{
 			const sf::Vector2f targetPosition = targets[maxScoreIndex].target->GetPosition();
-			Debug::DrawOutlinedCircle(targetPosition.x, targetPosition.y, targets[maxScoreIndex].target->GetRadius() - 8.f, 8.f, sf::Color(255, 159, 241)); // Light pink
+			Debug::DrawOutlinedCircle(targetPosition.x, targetPosition.y, targets[maxScoreIndex].target->GetRadius() - 4.f, 4.f, sf::Color(255, 159, 241)); // Light pink
 		}
 	}
 }
@@ -299,6 +299,7 @@ std::vector<TargetPassStatus> RugbyScene::GetTeammatesPassStatus()
 			(player->IsTag(Tag::PlayerRed)	 && playerPosition.x < playerWithBallPosition.x))
 		{
 			status = PassStatus::AheadCarrier;
+			continue;
 		}
 
 		// Check distance with teammate
